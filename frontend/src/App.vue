@@ -1,29 +1,32 @@
 <template>
   <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+    <div class="menu">
+      <el-menu
+        router
+        default-active="signal"
+        class="el-menu-demo"
+        mode="horizontal"
+      >
+        <el-menu-item index="signal">单域名查询</el-menu-item>
+        <el-menu-item index="multiple">多域名查询</el-menu-item>
+      </el-menu>
+      <div class="h-6" />
+    </div>
   </div>
-  <router-view/>
+  <router-view />
 </template>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
 #nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+  .menu {
+    width: 240px;
+    margin: 0 auto;
+    padding-left: 10px;
+  }
+  .el-menu {
+    border-bottom: none;
+    .el-menu-item {
+      background-color: #fff;
     }
   }
 }

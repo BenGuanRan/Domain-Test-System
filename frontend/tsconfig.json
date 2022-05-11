@@ -33,7 +33,7 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx"
-  ],
+, "src/api/signal.ts"  ],
   "exclude": [
     "node_modules"
   ]
