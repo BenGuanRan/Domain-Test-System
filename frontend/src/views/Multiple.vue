@@ -1,5 +1,5 @@
 <template>
-  <div class="multiple">
+  <div class="signal">
     <el-card shadow="hover"> Hover </el-card>
   </div>
 </template>

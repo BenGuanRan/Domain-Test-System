@@ -1,9 +1,8 @@
-export function getPoint(domian: string): Promise<number> {
-    domian
+import signalData from '@/mockData/signalData'
+export function getPoint(domian: string): Promise<Object> {
     return new Promise((res, rej) => {
-        rej
         setTimeout(() => {
-            res(Number((Math.random() * (9 - (-9)) + (-9)).toFixed(2)))
+            res(signalData)
         }, 1000);
     })
 }

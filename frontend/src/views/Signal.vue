@@ -38,35 +38,35 @@
           <template #label>
             <div class="cell-item">域名</div>
           </template>
-          www.baidu.com
+          {{ signalData.data.domainName }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
             <div class="cell-item">IP</div>
           </template>
-          127.0.0.1
+          {{ signalData.data.IP }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
             <div class="cell-item">CNAME</div>
           </template>
-          a.cm、b.cc、aran.cc
+          {{ signalData.data.cname }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label> <div class="cell-item">服务商</div></template>
-          阿里云
+          {{ signalData.data.domainServer }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
             <div class="cell-item">NS服务商</div>
           </template>
-          No.1188, Wuzhong Avenue, Wuzhong District, Suzhou, Jiangsu Province
+          {{ signalData.data.nsServer }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
             <div class="cell-item">CDN服务商</div>
           </template>
-          No.1188, Wuzhong Avenue, Wuzhong District, Suzhou, Jiangsu Province
+          {{ signalData.data.cdnServer }}
         </el-descriptions-item>
       </el-descriptions>
     </el-card>
@@ -74,40 +74,62 @@
       <div style="font-size: 20px" class="en_header">综合评估</div>
       <div class="en_body">
         <div class="en_l">
+          <div>该域名的日访问量为{{ signalData.data.visitCount }}人次</div>
           <h3>此域名综合得分:</h3>
           <div class="point_container">
-            <span>{{ point }}</span> 分
+            <span>{{ signalData.data.point }}</span> 分
             <div class="en_process">
               -9
               <el-progress
-                :percentage="pointToPercent(point)"
+                :percentage="pointToPercent(signalData.data.point)"
                 :color="pointColor"
               >
                 &nbsp; </el-progress
               >+9
             </div>
-            <div class="en_ifdanger">该域名存在风险！</div>
+            <div class="en_ifdanger">{{ signalData.data.pointMessage }}</div>
           </div>
         </div>
-        <div class="en_c"></div>
-        <div class="en_r"></div>
+        <div id="self_charts" class="en_r"></div>
       </div>
+    </el-card>
+    <el-card shadow="hover">
+      <div style="font-size: 20px" class="en_header">具体分析</div>
+      <p>
+        {{ signalData.data.detailAnalyse }}
+      </p>
     </el-card>
   </div>
 </template>
 
 <script lang='ts' setup>
-import { reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
 import { getPoint } from "@/api/signal";
 import { pointToPercent } from "@/utils/pointSwitch";
+import { drawRadar } from "@/utils/draw";
 
 const search_data = reactive({
   domain_name: "",
   domain_type: "",
 });
-const point = ref(0);
+const signalData = reactive({
+  data: {
+    domainName: "",
+    IP: "",
+    cname: [],
+    domainServer: "",
+    nsServer: "",
+    cdnServer: "",
+    visitCount: 0,
+    point: 0,
+    pointMessage: "",
+    data: [],
+    aveData: [],
+    detailAnalyse: "",
+  },
+});
 const search = async () => {
   const { domain_name: n, domain_type: t } = search_data;
 
@@ -123,16 +145,20 @@ const search = async () => {
     });
     return;
   }
-  point.value = await getPoint(n);
+  signalData.data = await getPoint(n);
+  drawRadar("self_charts", signalData.data.data, signalData.data.aveData);
 };
 
 const pointColor = ref("#f56c6c");
-watch(point, (n) => {
-  const percent = pointToPercent(n);
-  if (percent < 25) return (pointColor.value = "#e36049");
-  if (percent < 75) return (pointColor.value = "#e6a23c");
-  if (percent <= 100) return (pointColor.value = "#5cb87a");
-});
+watch(
+  () => signalData.data.point,
+  (n) => {
+    const percent = pointToPercent(n);
+    if (percent < 25) return (pointColor.value = "#e36049");
+    if (percent < 75) return (pointColor.value = "#e6a23c");
+    if (percent <= 100) return (pointColor.value = "#5cb87a");
+  }
+);
 </script>
 
 <style lang='scss' scoped>
@@ -153,7 +179,9 @@ watch(point, (n) => {
   .en_body {
     margin-top: 20px;
     .en_l {
-      width: 33.33%;
+      float: left;
+      width: 50%;
+      height: 300px;
       h3 {
         font-weight: normal;
         font-size: 16px;
@@ -182,9 +210,10 @@ watch(point, (n) => {
       }
     }
 
-    .en_c {
-      width: 33.33%;
-      
+    .en_r {
+      display: inline-block;
+      width: 50%;
+      height: 400px;
     }
   }
 }
