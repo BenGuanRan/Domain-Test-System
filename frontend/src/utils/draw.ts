@@ -1,9 +1,9 @@
 import * as echarts from "echarts";
 
-export function drawRadar(id: string, data: Array<number>, aveData: Array<number>) {
+export function drawRadar(node: any, data: Array<number>, aveData: Array<number>) {
     data = data.map(i => i + 9)
     aveData = aveData.map(i => i + 9)
-    const myChart = echarts.init(document.getElementById(id));
+    const myChart = echarts.init(node);
     const option = {
 
         legend: {
