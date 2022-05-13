@@ -1,3 +1,7 @@
-from django.db import models
+import mongoengine
 
-# Create your models here.
+class ConnetTest(mongoengine.Document):
+    name = mongoengine.StringField(max_length=32)
+    age = mongoengine.IntField(default=0)
+
+

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'apis.apps.ApisConfig'
 ]
 
 MIDDLEWARE = [
@@ -75,10 +76,12 @@ WSGI_APPLICATION = 'backend_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': None,
     }
 }
+
+from mongoengine import *
+connect('domain_country', username='root', password='#HITnist327',host='10.245.146.43', port=27077)
 
 
 # Password validation
