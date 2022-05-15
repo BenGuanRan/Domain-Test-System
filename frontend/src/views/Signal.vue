@@ -97,6 +97,7 @@
             <div class="loading" v-if="ifSearch && !ifShowResult">
               <loading></loading>
             </div>
+            <div v-if="!ifSearch">NIST</div>
 
             <div id="self_charts"></div>
           </div>

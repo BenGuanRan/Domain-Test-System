@@ -1,15 +1,46 @@
 <template>
-  <div class="signal">
-    <el-card shadow="hover"> Hover </el-card>
-  </div>
+  <el-upload
+    drag
+    ref="upload"
+    class="upload-demo"
+    action=""
+    :limit="1"
+    :on-exceed="handleExceed"
+    :http-request="uploadHandler"
+  >
+    <template #trigger>
+      <el-button type="primary">select file</el-button>
+    </template>
+    <el-button class="ml-3" type="success" @click="submitUpload">
+      upload to server
+    </el-button>
+    <template #tip>
+      <div class="el-upload__tip text-red">
+        limit 1 file, new file will cover the old file
+      </div>
+    </template>
+  </el-upload>
 </template>
 
-<script lang='ts' setup>
-import { reactive, ref } from "vue";
+<script setup lang="ts">
+import { ref } from "vue";
+import { genFileId } from "element-plus";
+import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
 
-const num = ref(0);
-const data = reactive({});
+const upload = ref<UploadInstance>();
+
+const handleExceed: UploadProps["onExceed"] = (files) => {
+  upload.value!.clearFiles();
+  const file = files[0] as UploadRawFile;
+  file.uid = genFileId();
+  upload.value!.handleStart(file);
+};
+
+const submitUpload = () => {
+  upload.value!.submit();
+};
+
+const uploadHandler = (params) => {
+  console.log(params);
+};
 </script>
-
-<style lang='scss' scoped>
-</style>
