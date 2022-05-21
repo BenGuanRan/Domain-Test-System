@@ -4,5 +4,7 @@ from apis import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/' ,views.home)
+    path('api/' ,views.home),
+    path('api/signal', views.getSignalInfo),
+    path('api/multiple', views.getMultipleInfo)
 ]

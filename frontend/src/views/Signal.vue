@@ -61,13 +61,13 @@
             <template #label>
               <div class="cell-item">NS服务商</div>
             </template>
-            {{ signalData.data.nsServer }}
+            {{ signalData.data.NSServer }}
           </el-descriptions-item>
           <el-descriptions-item>
             <template #label>
               <div class="cell-item">CDN服务商</div>
             </template>
-            {{ signalData.data.cdnServer }}
+            {{ signalData.data.CDNServer }}
           </el-descriptions-item>
         </el-descriptions>
       </el-card>
@@ -135,13 +135,13 @@ const signalData = reactive({
     IP: "",
     cname: [],
     domainServer: "",
-    nsServer: "",
-    cdnServer: "",
+    NSServer: "",
+    CDNServer: "",
     visitCount: 0,
     point: 0,
     pointMessage: "",
     data: [],
-    aveData: [],
+    avedata: [],
     detailAnalyse: "",
   },
 });
@@ -150,8 +150,6 @@ const search = async () => {
   const { domain_name: n, domain_type: t } = search_data;
   const rule =
     /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/;
-  console.log(n);
-
   if (t === "" || !rule.test(n)) {
     ElNotification({
       title: "错误",
@@ -162,12 +160,14 @@ const search = async () => {
   }
   ifSearch.value = true;
   ifShowResult.value = false;
-  signalData.data = await getPoint(n);
+  signalData.data = (await getPoint(n, t)).data;
+  console.log(signalData.data);
+
   ifShowResult.value = true;
   drawRadar(
     document.getElementById("self_charts"),
     signalData.data.data,
-    signalData.data.aveData
+    signalData.data.avedata
   );
 };
 
