@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Signal from '../views/Signal.vue'
-import Multiple from '../views/Multiple.vue'
+import Multiple from '../views/Multy.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -9,12 +9,18 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/signal',
     name: 'Signal',
-    component: Signal
+    component: Signal,
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/multiple',
     name: 'Multiple',
-    component: Multiple
+    component: Multiple,
+    meta: {
+      keepAlive: true
+    }
   }
 ]
 

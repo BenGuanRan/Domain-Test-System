@@ -1,20 +1,17 @@
-export function exportExcel(data: any, title: Array<string> = []) {
+const XLSX = require("xlsx");
+
+export function exportExcel(data: any, fileName = '数据表', title: Array<string> = []) {
     let str = ''
     // 如果是数组
     if (data instanceof Array) {
-        if (title.length == 0)
-            title = Object.keys(data[0])
-        // 列标题，逗号隔开，每一个逗号就是隔开一个单元格
-        str = title.join(',') + '\n';
-        // 增加\t为了不让表格显示科学计数法或者其他格式
-        for (let i = 0; i < data.length; i++) {
-            for (const key in data[i]) {
-                str += `${data[i][key] + '\t'},`;
+        const jsonWorkSheet = XLSX.utils.json_to_sheet(data);
+        const workbook = {
+            SheetNames: [fileName],
+            Sheets: {
+                [fileName]: jsonWorkSheet,
             }
-            str += '\n';
-        }
-
-
+        };
+        return XLSX.writeFile(workbook, fileName + '.xlsx');
     }
     // 如果是对象
     else if (data instanceof Object) {
@@ -22,7 +19,7 @@ export function exportExcel(data: any, title: Array<string> = []) {
             title = Object.keys(data)
         str = ""
         title.forEach(i => {
-            str += `${i},${data[i]}\t\n`
+            str += `${i},${data[i]}\n`
         })
 
 
@@ -35,6 +32,6 @@ export function exportExcel(data: any, title: Array<string> = []) {
     const link = document.createElement("a");
     link.href = uri;
     // 对下载的文件命名
-    link.download = "json数据表.csv";
+    link.download = fileName + '.csv';
     link.click();
 }

@@ -5,11 +5,14 @@
         <el-menu-item index="signal">单域名查询</el-menu-item>
         <el-menu-item index="multiple">多域名查询</el-menu-item>
       </el-menu>
-      {{ this }}
       <div class="h-6" />
     </div>
   </div>
-  <router-view />
+  <router-view v-slot="{ Component }">
+    <keep-alive>
+      <component :is="Component" />
+    </keep-alive>
+  </router-view>
 </template>
 
 <script setup lang="ts" >
