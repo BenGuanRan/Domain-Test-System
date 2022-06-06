@@ -55,7 +55,7 @@
           </el-descriptions-item>
           <el-descriptions-item>
             <template #label> <div class="cell-item">服务商</div></template>
-            {{ signalData.data.domainServer }}
+            {{ signalData.data.register }}
           </el-descriptions-item>
           <el-descriptions-item>
             <template #label>
@@ -67,7 +67,7 @@
             <template #label>
               <div class="cell-item">CDN服务商</div>
             </template>
-            {{ signalData.data.CDNServer }}
+            {{ signalData.data.CDNServer || "暂无" }}
           </el-descriptions-item>
         </el-descriptions>
       </el-card>
@@ -77,7 +77,13 @@
         </div>
         <div class="en_body">
           <div class="en_l" v-if="ifShowResult">
-            <div>该域名的日访问量为{{ signalData.data.visitCount }}人次</div>
+            <div v-if="signalData.data.visit_count">
+              该域名的日访问量为
+              <span class="visit_color" style="font-size: 20px">{{
+                signalData.data.visit_count
+              }}</span>
+              人次
+            </div>
             <h3>此域名综合得分:</h3>
             <div class="point_container">
               <span>{{ signalData.data.point }}</span> 分
@@ -90,7 +96,7 @@
                   &nbsp; </el-progress
                 >+9
               </div>
-              <div class="en_ifdanger">{{ signalData.data.pointMessage }}</div>
+              <div class="en_ifdanger">{{ signalData.data.pointmessage }}</div>
             </div>
           </div>
           <div ref="node" class="en_r">
@@ -105,8 +111,38 @@
       </el-card>
       <el-card v-if="ifShowResult" shadow="never">
         <div style="font-size: 20px" class="en_header">具体分析</div>
-        <p>
-          {{ signalData.data.detailAnalyse }}
+        <p v-if="signalData.data.pointmessage === '不存在风险'">
+          该域名综合影响力
+          <span :style="{ color: randerColor[1], fontSize: '18px' }">
+            {{ signalData.data.detailanalyse[0] }}
+          </span>
+          ,该类型域名平均得分为
+          <span :style="{ color: randerColor[2], fontSize: '18px' }">
+            {{ signalData.data.detailanalyse[1] }}
+          </span>
+          ,从域名解析背后实体的国家属性来看此域名是安全的!
+        </p>
+        <p v-else>
+          该域名综合影响力
+          <span :style="{ color: randerColor[1], fontSize: '18px' }">
+            {{ signalData.data.detailanalyse[0] }}
+          </span>
+          ,该类型域名平均得分为
+          <span :style="{ color: randerColor[2], fontSize: '18px' }">
+            {{ signalData.data.detailanalyse[1] }}
+          </span>
+          ,此域名
+          <span :style="{ color: randerColor[3], fontSize: '18px' }">
+            {{ signalData.data.detailanalyse[2] }}
+          </span>
+          一项得分最低，
+          <span :style="{ color: randerColor[4], fontSize: '18px' }">
+            {{ signalData.data.detailanalyse[3] }}
+          </span>
+          ,修改后域名的总体得分为
+          <span :style="{ color: randerColor[5], fontSize: '18px' }">
+            {{ signalData.data.detailanalyse[4] }} </span
+          >!
         </p>
       </el-card>
     </div>
@@ -126,24 +162,34 @@ import { exportExcel } from "@/utils/exportExcel";
 const ifShowResult = ref(false);
 const ifSearch = ref(false);
 const search_data = reactive({
-  domain_name: "",
-  domain_type: "",
+  domain_name: "baidu.com",
+  domain_type: "2",
 });
 const signalData = reactive({
   data: {
     domainName: "",
     IP: "",
     cname: [],
-    domainServer: "",
+    register: "",
     NSServer: "",
     CDNServer: "",
-    visitCount: 0,
+    visit_count: 0,
     point: 0,
-    pointMessage: "",
+    pointmessage: "",
     data: [],
     avedata: [],
-    detailAnalyse: "",
+    detailanalyse: "",
   },
+});
+
+onMounted(() => {
+  // 添加全局enter事件
+  document.onkeyup = (e) => {
+    if (e.keyCode === 13) {
+      document.onkeyup = null;
+      return search();
+    }
+  };
 });
 
 const search = async () => {
@@ -171,7 +217,10 @@ const search = async () => {
   );
 };
 
+// 颜色管理
 const pointColor = ref("#f56c6c");
+const visitColor = ref("#f56c6c");
+const randerColor = ref([""]);
 watch(
   () => signalData.data.point,
   (n) => {
@@ -179,6 +228,48 @@ watch(
     if (percent < 25) return (pointColor.value = "#e36049");
     if (percent < 75) return (pointColor.value = "#e6a23c");
     if (percent <= 100) return (pointColor.value = "#5cb87a");
+  }
+);
+watch(
+  () => signalData.data.visit_count,
+  (n) => {
+    if (n < 10000) return (visitColor.value = "#27bdde");
+    if (n < 100000) return (visitColor.value = "#fedd42");
+    if (n <= 1000000) return (visitColor.value = "#fb972a");
+    if (n > 1000000) return (visitColor.value = "#f74e60");
+  }
+);
+watch(
+  () => signalData.data.pointmessage,
+  (n) => {
+    const colors = [
+      "#48c9b0",
+      "#198ae0",
+      "#26c0de",
+      "#23d28f",
+      "#bc6aa9",
+      "#bdb76b",
+      "#fd982f",
+      "#f94c66",
+      "#a85661",
+      "#6d5741",
+      "#259544",
+    ];
+    let num = Math.floor(Math.random() * (10 - 0 + 1)) + 0;
+    console.log(num);
+
+    if (n === "存在一定风险") {
+      // 随机五个颜色
+      for (let i = 0; i < 5; i++) {
+        randerColor.value.push(colors[num++ % 11]);
+      }
+    } else {
+      // 随机两个颜色
+      for (let i = 0; i < 2; i++) {
+        randerColor.value.push(colors[num++ % 11]);
+      }
+    }
+    console.log(randerColor.value);
   }
 );
 const exportData = () => {
@@ -200,6 +291,7 @@ const exportData = () => {
   margin-bottom: 50px;
 }
 #signal {
+  font-weight: 500;
   .search_container {
     width: 500px;
     margin: 30px auto;
@@ -221,6 +313,7 @@ const exportData = () => {
         font-size: 16px;
       }
       .point_container {
+        margin-top: 50px;
         text-align: center;
         span {
           font-weight: 700;
@@ -229,7 +322,7 @@ const exportData = () => {
         }
       }
       .en_process {
-        margin-top: 20px;
+        margin-top: 30px;
         font-size: 12px;
         vertical-align: center;
       }
@@ -238,9 +331,13 @@ const exportData = () => {
         display: inline-block;
       }
       .en_ifdanger {
+        font-size: 30px;
         font-weight: 600;
-        margin-top: 20px;
+        margin-top: 40px;
         color: v-bind(pointColor);
+      }
+      .visit_color {
+        color: v-bind(visitColor);
       }
     }
 

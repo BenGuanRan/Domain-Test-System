@@ -1,11 +1,14 @@
-from .inform_get import *
+from inform_get import *
 import threading
 import dns
 from lxml import etree
-from .score import *
+from score import *
 from dns import resolver
+import findcdn
 import re
 import multiprocessing
+import random
+from collections import defaultdict
 from bs4 import BeautifulSoup
 import requests
 import pymongo
@@ -15,9 +18,12 @@ import whois
 from concurrent.futures import ThreadPoolExecutor, as_completed, ProcessPoolExecutor,wait,FIRST_COMPLETED,ALL_COMPLETED
 import queue
 import time
+from threading import RLock
 import sys
 import openpyxl
 from numpy import mean
+base_path = "./分类域名.xlsx" #项目存放读取文件的路径
+sys.path.append(base_path)
 corpor_domains_average_dict = {'all_average': 0.5613793103448276, 'tld_average': 0.20689655172413793,
                                'register_average': 2.4, 'IP_average': 9.0, 'NS_average': 7.143720238095236,
                                'CDN_average': 0.5, 'cname_average': -1.262543859649123}
@@ -397,6 +403,30 @@ def get_cdns(domain):
                 cdncountry.append('CN')
         return {"cdn服务商": CDN_list, "对应的国家": cdncountry}
     else:
+        return {"cdn服务商": ["NULL"], "对应的国家": ["NULL"]}
+
+
+
+def get_cdns_inform(domain):  # 输入一个域名列表，即可获取列表中域名的CDN信息，并打印相关信息
+    domain_list = []
+    domain_list.append(domain)
+    i = get_standerd_domain_name(domain)
+    path = 'output'+i+'.json'
+    resp_json = findcdn.main(domain_list=domain_list, output_path='output'+i+'.json', double_in=True, threads=23,timeout=10)
+    dumped_json = json.loads(resp_json)  # 运行后会在每次获取之后生成一个json文件（没啥用）
+      # 删除生成的json文件
+    if os.path.exists(path):
+        os.remove(path)
+    domainname = domain  # 需要获取CDN信息的域名
+    cdnname = []  # 得到与域名相关的CDN服务商的列表
+    try:
+        cdnnameget = eval(dumped_json['domains'][domain]['cdns_by_names'])
+        cdnname.append(cdnnameget)
+        cdncountry = []
+        for i in cdnname:  # 对列表中的每个CDN服务商，在字典中寻找其国籍，并依次存入cdncountry列表
+            cdncountry.append(CDNdict.get(i))
+        return {"cdn服务商": cdnname, "对应的国家": cdncountry}
+    except:
         return {"cdn服务商": ["NULL"], "对应的国家": ["NULL"]}
 
 
@@ -882,7 +912,7 @@ def multifind(domain_list):
     final_list = []
     dbname = "domain_country"
     collname = "Cinese_top_100_inform"
-    collname = get_time()
+    #collname = get_time()
     runlist_to_db(domain_list, dbname, collname, 6, 1)
     new_con = operating_data_mongodb()
     db = new_con[dbname]
@@ -908,12 +938,18 @@ def multifind(domain_list):
     return final_list
 
 if __name__ == '__main__':
+    con = operating_data_mongodb()
+    databases = con["domain_county"]
+    collname= database["chinese_domains"]
+    domainlist = get_domainname_list(collname,0,100)
+    con.close()
+    print(domainlist)
+    domainlist =domainlist[0]
+    multifind(domainlist)
     '''
     使用multifind（）函数完成对于列表的查询，返回值为一个列表，列表的各项是各域名对应信息的字典
     '''
-    # print(run_one("www.gov.cn",1))
-    data = ['baidu.com','taobao.com','ali.com','toutiao.com']
-    print(multifind(data))
+    #print(run_one("jlu.edu.cn",2))
     '''
     type = 1 对应教育类 ，2 对应政府机关类，3对应银行/企业官网类，4对应娱乐/购物网站类
     run_one（domain,type) 用于单域名查询其返回值为一个字典，样例如下

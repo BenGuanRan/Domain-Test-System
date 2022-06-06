@@ -1273,7 +1273,7 @@ def get_mid_of_domain_name(domainname):
 
 
 def get_register_country(domain):
-    geted = whois.whois("baidu.com")
+    geted = whois.whois(domain)
     register = geted.get("registrar")
     try:
         register_country = register_dict.get(register)

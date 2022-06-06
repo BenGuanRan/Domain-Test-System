@@ -13,7 +13,7 @@ def home(request):
 def getSignalInfo(request):
     if request.method == 'GET':
         domain = request.GET.get('domain', default='baidu.com')
-        type = request.GET.get('type', default='1')
+        type = request.GET.get('type', default='3')
         res = run_one(domain, type)
         print(res)
         return HttpResponse(json.dumps(res))
@@ -21,7 +21,10 @@ def getSignalInfo(request):
         return  HttpResponse('只支持get')
 
 def getMultipleInfo(request):
-    domainlist = ["www.baidu.com", "www.sohu.com", "www.qq.com", "www.hteacher.net", "www.leiphone.com", "www.126.com"]
-    res = multifind(domainlist)
-    print(res)
-    return HttpResponse(json.dumps(res))
+    if request.method == 'GET':
+        domainlist = request.GET.get('domains')
+        print(domainlist.split('/'))
+        res = multifind(domainlist.split('/'))
+        return HttpResponse(json.dumps(res))
+    else:
+        return  HttpResponse('只支持get')

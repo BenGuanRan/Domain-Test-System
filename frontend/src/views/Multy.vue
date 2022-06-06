@@ -31,7 +31,6 @@
     border
   >
     <el-table-column prop="domain" align="center" label="域名" />
-    <el-table-column prop="type" align="center" label="类型" />
     <el-table-column align="center" width="114">
       <template #header>
         <el-button @click="submitUpload" v-if="!ifFinding">批量查询</el-button>
@@ -55,9 +54,8 @@
     <h3>查询结果</h3>
     <el-table height="250" :data="res" border style="width: 100%">
       <el-table-column prop="domainName" label="域名" width="180" />
-      <el-table-column prop="type" label="类型" width="180" />
       <el-table-column prop="IP" label="IP" />
-      <el-table-column prop="point" label="得分" />
+      <el-table-column prop="point" label="综合得分" />
       <el-table-column prop="data" label="各项得分" />
     </el-table>
   </el-card>
@@ -97,11 +95,32 @@ const ifFinding = ref<boolean>(false);
 const ifGetRes = ref<boolean>(false);
 const submitUpload = async () => {
   ifFinding.value = true;
+  // 设置查找频率为3，即每次查找三个域名
+  const remainder = domains.value.length % 3;
+  // 将数组化为 M*3 的二维数组
+  const searchValues = [];
+  let temp = [];
   for (let i = 0; i < domains.value.length; i++) {
-    res.value.push(...(await getPoints(i)));
-    domains.value[i]["over"] = true;
+    temp.push(domains.value[i]);
+    if (i % 3 === 2) {
+      searchValues.push(temp);
+      temp = [];
+    }
   }
-  ifGetRes.value = true;
+  if (remainder) {
+    searchValues.push(temp);
+  }
+  console.log(searchValues);
+
+  // 遍历searchValues进行分片查询
+  for (let i = 0; i < searchValues.length; i++) {
+    res.value.push(...(await getPoints(searchValues[i])).data);
+    if (!ifGetRes.value) ifGetRes.value = true;
+    for (let j = 0; j < searchValues[i].length; j++) {
+      domains.value[3 * i + j]["over"] = true;
+    }
+  }
+
   const node: any = document.querySelector(".bar_container");
   node.className = "h_700";
   drawBar(node, [], [], [], [], [], [], []);
@@ -135,18 +154,13 @@ const downloadExampleFile = () => {
   return exportExcel(
     [
       {
-        domain: "aaa.com",
-        type: 0,
-        "": "",
-        "注意：域名type类型定义，0政府、1服务娱乐、2教育、3公司企业。": "",
+        domain: "baidu.com",
       },
       {
-        domain: "bbb.com",
-        type: 1,
+        domain: "taobao.com",
       },
       {
-        domain: "ccc.com",
-        type: 2,
+        domain: "tencent.com",
       },
     ],
     "样例文件",
