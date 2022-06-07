@@ -55,13 +55,13 @@ export function drawRadar(node: any, data: Array<number>, aveData: Array<number>
 }
 
 export function drawBar(node: any, data: number[], IPData: number[], CNAMEData: number[], serverData: number[], NSData: number[], rootData: number[], DNSData: number[]): void {
-    data = [1, 2, 4, 5, 6, 4, 5, 8, 7, 6, 2, 1, 4, 5, 8, 7, 9, 6]
-    IPData = [1, 5, 4, 8, 7, 5, 2, 1, 5, 6, 5, 4, 8, 9, 7, 5, 6, 2]
-    CNAMEData = [5, 4, 8, 6, 2, 1, 5, 6, 9, 8, 7, 5, 6, 3, 2, 1, 5, 9]
-    serverData = [4, 5, 8, 5, 9, 1, 2, 5, 8, 6, 3, 2, 1, 8, 5, 0, 2, 5]
-    NSData = [4, 5, 6, 9, 8, 7, 5, 2, 4, 5, 6, 9, 8, 4, 5, 6, 2, 1]
-    rootData = [4, 5, 2, 8, 6, 5, 2, 1, 2, 0, 1, 5, 6, 9, 0, 2, 5, 6]
-    DNSData = [4, 5, 8, 9, 7, 8, 6, 5, 8, 9, 8, 9, 8, 2, 6, 8, 9, 8]
+    // data = [1, 2, 4, 5, 6, 4, 5, 8, 7, 6, 2, 1, 4, 5, 8, 7, 9, 6]
+    // IPData = [1, 5, 4, 8, 7, 5, 2, 1, 5, 6, 5, 4, 8, 9, 7, 5, 6, 2]
+    // CNAMEData = [5, 4, 8, 6, 2, 1, 5, 6, 9, 8, 7, 5, 6, 3, 2, 1, 5, 9]
+    // serverData = [4, 5, 8, 5, 9, 1, 2, 5, 8, 6, 3, 2, 1, 8, 5, 0, 2, 5]
+    // NSData = [4, 5, 6, 9, 8, 7, 5, 2, 4, 5, 6, 9, 8, 4, 5, 6, 2, 1]
+    // rootData = [4, 5, 2, 8, 6, 5, 2, 1, 2, 0, 1, 5, 6, 9, 0, 2, 5, 6]
+    // DNSData = [4, 5, 8, 9, 7, 8, 6, 5, 8, 9, 8, 9, 8, 2, 6, 8, 9, 8]
 
     const myChart = echarts.init(node)
     const emphasisStyle = {

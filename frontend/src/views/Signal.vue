@@ -72,10 +72,8 @@
         </el-descriptions>
       </el-card>
       <el-card shadow="never" style="position: relative">
-        <div style="font-size: 20px" class="en_header" v-if="ifShowResult">
-          综合评估
-        </div>
         <div class="en_body">
+          <div class="beauty_box" v-if="!ifSearch"></div>
           <div class="en_l" v-if="ifShowResult">
             <div v-if="signalData.data.visit_count">
               该域名的日访问量为
@@ -103,7 +101,6 @@
             <div class="loading" v-if="ifSearch && !ifShowResult">
               <loading></loading>
             </div>
-            <div v-if="!ifSearch">NIST</div>
 
             <div id="self_charts"></div>
           </div>
@@ -162,8 +159,8 @@ import { exportExcel } from "@/utils/exportExcel";
 const ifShowResult = ref(false);
 const ifSearch = ref(false);
 const search_data = reactive({
-  domain_name: "baidu.com",
-  domain_type: "2",
+  domain_name: "",
+  domain_type: "",
 });
 const signalData = reactive({
   data: {
@@ -278,6 +275,16 @@ const exportData = () => {
 </script>
 
 <style lang='scss' scoped>
+.beauty_box {
+  background-image: url(../assets/logo.png);
+  z-index: 1;
+  background-position: center 8%;
+  background-size: 60%;
+  background-repeat: no-repeat;
+  position: absolute;
+  width: 100%;
+  height: 1000px;
+}
 ::v-deep(.el-descriptions__title) {
   font-size: 20px !important;
 }
@@ -303,6 +310,7 @@ const exportData = () => {
     font-weight: 700;
   }
   .en_body {
+    height: 100%;
     margin-top: 20px;
     .en_l {
       float: left;

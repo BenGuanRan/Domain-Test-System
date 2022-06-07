@@ -18,18 +18,18 @@ import time
 import sys
 import openpyxl
 from numpy import mean
-corpor_domains_average_dict = {'all_average': 0.5613793103448276, 'tld_average': 0.20689655172413793,
-                               'register_average': 2.4, 'IP_average': 9.0, 'NS_average': 7.143720238095236,
-                               'CDN_average': 0.5, 'cname_average': -1.262543859649123}
-edu_domains_average_dict = {'all_average': 2.497586206896552, 'tld_average': 9.0, 'register_average': -8.0,
+corpor_domains_average_dict = {'all_average': 5.7657, 'tld_average': 0.20689655172413793,
+                               'register_average': 7.464, 'IP_average': 9.0, 'NS_average': 7.143720238095236,
+                               'CDN_average': 0.5, 'cname_average': 3.6554}
+edu_domains_average_dict = {'all_average': 7.45, 'tld_average': 9.0, 'register_average': 8.756,
                             'IP_average': 6.2, 'NS_average': 8.44, 'CDN_average': 0,
-                            'cname_average': 0.5444444444444443}
-govern_domains_average_dict = {'all_average': 2.360344827586207, 'tld_average': 7.827586206896552,
-                               'register_average': 7.6, 'IP_average': 9.0, 'NS_average': 7.606839080459769,
-                               'CDN_average': 9.0, 'cname_average': 0.2717313762626261}
-entertain_domains_average_dict = {'all_average': -0.12300000000000004, 'tld_average': -7.433333333333334,
-                                  'register_average': -6.0, 'IP_average': 9.0, 'NS_average': 8.409472222222222,
-                                  'CDN_average': 9.0, 'cname_average': 0.37993589743589745}
+                            'cname_average': 4.4535}
+govern_domains_average_dict = {'all_average': 7.89, 'tld_average': 7.827586206896552,
+                               'register_average': 8.234, 'IP_average': 9.0, 'NS_average': 7.606839080459769,
+                               'CDN_average': 9.0, 'cname_average': 4.78786}
+entertain_domains_average_dict = {'all_average': 3.5435, 'tld_average': -7.433333333333334,
+                                  'register_average': 5.0244, 'IP_average': 9.0, 'NS_average': 6.46454,
+                                  'CDN_average': 4.5, 'cname_average': 2.5466}
 with open('NS_dict.json', 'r+') as file:
     NS_dict = file.read()
 NS_dict = json.loads(NS_dict)  # 将json格式文件转化为python的字典文件
@@ -62,39 +62,6 @@ class ns_Thread(threading.Thread):
             self.nsinformdictlist = get_ns_inform_list(self.domainname)
             self.e.put(self.nsinformdictlist)
 
-class HandleExcel:
-    def load_excel(self):
-        '''
-        加载excel
-        '''
-        open_excel = openpyxl.load_workbook(base_path)#拿到excel的所有内容
-        return open_excel
-    def get_sheet_data(self,index=None):
-        '''
-        加载所有sheet的内容
-        '''
-        sheet_name = self.load_excel().sheetnames#拿到sheetnames的所有内容
-        if index == None:
-            index = 0
-        data = self.load_excel()[sheet_name[index]]
-        return data
-    def get_cell_value(self,row,cols):
-        '''
-        获取某一个单元格内容
-        '''
-        data = self.get_sheet_data().cell(row=row,column=cols)
-        return data
-    def get_rows(self):
-        row = self.get_sheet_data().max_row
-        return row
-    def get_rows_value(self,row):
-        '''
-        获取某一行的内容
-        '''
-        row_list = []
-        for i in self.get_sheet_data()[row]:
-            row_list.append(i.value)
-        return row_list
 
 
 def operating_data_mongodb():
@@ -690,15 +657,15 @@ def run_one(domain,type):
     for iten in score_dict:
         data.append(score_dict.get(iten))#列表顺序为顶级域，注册商，IP，NS，CDN，别名
     data = data[1:]
-    if(type == "1"):   #教育类型
+    if(type == "3"):   #教育类型
         for iten in edu_domains_average_dict:
             avedata.append(edu_domains_average_dict.get(iten))
         avedata = avedata[1:]#列表顺序为顶级域，注册商，IP，NS，CDN，别名
-    elif(type== "2"):  #政府机关类型
+    elif(type== "1"):  #政府机关类型
         for iten in govern_domains_average_dict:
             avedata.append(govern_domains_average_dict.get(iten))
         avedata = avedata[1:]#列表顺序为顶级域，注册商，IP，NS，CDN，别名
-    elif(type == "3"):  #银行/公司官网类型
+    elif(type == "4"):  #银行/公司官网类型
         for iten in corpor_domains_average_dict:
             avedata.append(corpor_domains_average_dict.get(iten))
         avedata = avedata[1:]#列表顺序为顶级域，注册商，IP，NS，CDN，别名

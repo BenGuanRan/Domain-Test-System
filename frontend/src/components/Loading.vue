@@ -1,6 +1,6 @@
 <template>
   <div class="boxLoading"></div>
-  <span class="fontLoading">加载中...</span>
+  <span class="fontLoading">评估中...</span>
 </template>
 <script>
 export default {};

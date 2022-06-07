@@ -2,6 +2,7 @@ const XLSX = require("xlsx");
 
 export function exportExcel(data: any, fileName = '数据表', title: Array<string> = []) {
     let str = ''
+    
     // 如果是数组
     if (data instanceof Array) {
         const jsonWorkSheet = XLSX.utils.json_to_sheet(data);
