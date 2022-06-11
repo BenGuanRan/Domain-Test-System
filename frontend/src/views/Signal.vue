@@ -13,7 +13,7 @@
             style="width: 100px"
           >
             <el-option label="政府" value="1" />
-            <el-option label="服务娱乐" value="2" />
+            <el-option label="娱乐服务" value="2" />
             <el-option label="教育" value="3" />
             <el-option label="公司企业" value="4" />
           </el-select>
@@ -75,6 +75,9 @@
         <div class="en_body">
           <div class="beauty_box" v-if="!ifSearch"></div>
           <div class="en_l" v-if="ifShowResult">
+            <div style="font-size: 20px; margin-top: -20px" class="en_header">
+              综合评估
+            </div>
             <div v-if="signalData.data.visit_count">
               该域名的日访问量为
               <span class="visit_color" style="font-size: 20px">{{
@@ -128,7 +131,7 @@
           <span :style="{ color: randerColor[2], fontSize: '18px' }">
             {{ signalData.data.detailanalyse[1] }}
           </span>
-          ,此域名
+          ,此域名除顶级域名一项之外，
           <span :style="{ color: randerColor[3], fontSize: '18px' }">
             {{ signalData.data.detailanalyse[2] }}
           </span>
@@ -300,6 +303,7 @@ const exportData = () => {
 #signal {
   font-weight: 500;
   .search_container {
+    background-color: #fff;
     width: 500px;
     margin: 30px auto;
   }
@@ -307,6 +311,7 @@ const exportData = () => {
     margin-bottom: 20px;
   }
   .en_header {
+    margin-bottom: 20px;
     font-weight: 700;
   }
   .en_body {

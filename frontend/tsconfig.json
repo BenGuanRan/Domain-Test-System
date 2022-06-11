@@ -13,7 +13,10 @@
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
-      "webpack-env"
+      "webpack-env",
+      "jest",
+      "node",
+      "element-plus/global"
     ],
     "paths": {
       "@/*": [
@@ -32,8 +35,9 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
-, "src/api/signal.ts"  ],
+    "tests/**/*.tsx",
+    "src/api/signal.ts"
+  ],
   "exclude": [
     "node_modules"
   ]

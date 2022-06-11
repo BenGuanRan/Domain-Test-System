@@ -590,7 +590,7 @@ def get_detail_analyse(data,visit_count,type,score_dict,message):
             advise = "建议更改此域名别名的各项属性，并尽可能使用属于中国的服务商与注册商"
         changed_score = score_for_one_domain(score_dict)
         final_list = [comprehansive_impact,avescore,min_name,advise,changed_score]
-        #列表中顺序与此文字中通配符顺序对应“该域名综合影响力%s,该类型域名平均得分为%d,此域名%s一项得分最低，建议%s,修改后域名的总体得分为%s“
+        #列表中顺序与此文字中通配符顺序对应“该域名综合影响力%s,该类型域名平均得分为%d,此域名除顶级域一项之外，%s一项得分最低，建议%s,修改后域名的总体得分为%s“
         return final_list
 
 
